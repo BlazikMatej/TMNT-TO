@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TMNT Tower Defense</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <h1>TMNT Tower Defense</h1>
+        <p class="subtitle">Pošli želvy proti Trhačovi</p>
+      </header>
+
+      <section id="auth-screen" class="screen">
+        <div class="panel">
+          <h2>Přihlášení</h2>
+          <form id="login-form">
+            <label>
+              Username
+              <input type="text" name="username" required />
+            </label>
+            <label>
+              Heslo
+              <input type="password" name="password" required />
+            </label>
+            <button type="submit">Přihlásit</button>
+          </form>
+          <p class="form-message" id="login-message"></p>
+        </div>
+        <div class="panel">
+          <h2>Registrace</h2>
+          <form id="register-form">
+            <label>
+              Username
+              <input type="text" name="username" required />
+            </label>
+            <label>
+              Heslo
+              <input type="password" name="password" required />
+            </label>
+            <button type="submit">Vytvořit účet</button>
+          </form>
+          <p class="form-message" id="register-message"></p>
+        </div>
+      </section>
+
+      <section id="menu-screen" class="screen hidden">
+        <div class="panel wide">
+          <div class="menu-header">
+            <div>
+              <h2>Menu</h2>
+              <p>Uživatel: <span id="profile-username"></span></p>
+              <p>Meta měna: <span id="profile-meta"></span> krystalů</p>
+              <p>Odemčené jednotky: <span id="profile-units"></span></p>
+            </div>
+            <button id="logout-button" class="ghost">Odhlásit</button>
+          </div>
+
+          <div class="menu-grid">
+            <div>
+              <h3>Výběr levelu</h3>
+              <div id="level-list" class="level-list"></div>
+              <button id="start-level">Start levelu</button>
+            </div>
+            <div>
+              <h3>Obchod</h3>
+              <div id="shop-list" class="shop-list"></div>
+              <p id="shop-message" class="form-message"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="game-screen" class="screen hidden">
+        <div class="panel wide">
+          <div class="hud">
+            <div>
+              <strong>Level:</strong> <span id="hud-level"></span>
+              <strong>Boss:</strong> <span id="hud-boss"></span>
+            </div>
+            <div>
+              <strong>Coins:</strong> <span id="hud-coins"></span>
+              <strong>Jednotky:</strong> <span id="hud-units"></span>
+              <strong>Upgrade:</strong> <span id="hud-upgrade"></span>
+            </div>
+            <div class="hud-actions">
+              <select id="unit-select"></select>
+              <button id="send-unit">Poslat jednotku</button>
+              <button id="upgrade-unit">Upgrade (25)</button>
+              <button id="exit-level" class="ghost">Zpět do menu</button>
+            </div>
+          </div>
+          <canvas id="game-canvas" width="900" height="520"></canvas>
+          <div id="result-panel" class="result-panel hidden">
+            <h3 id="result-title"></h3>
+            <p id="result-summary"></p>
+            <button id="result-back">Zpět do menu</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

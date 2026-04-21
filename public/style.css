@@ -1,0 +1,158 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #0d1117;
+  color: #e6edf3;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.subtitle {
+  color: #8b949e;
+  margin-top: 4px;
+}
+
+.screen {
+  display: grid;
+  gap: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.panel {
+  background: #161b22;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.panel.wide {
+  width: 100%;
+}
+
+.panel h2,
+.panel h3 {
+  margin-top: 0;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: #c9d1d9;
+}
+
+input,
+select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #30363d;
+  background: #0d1117;
+  color: #e6edf3;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #2ea043;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #3fb950;
+}
+
+button.ghost {
+  background: transparent;
+  border: 1px solid #30363d;
+}
+
+.form-message {
+  min-height: 18px;
+  color: #f85149;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 18px;
+}
+
+.level-list,
+.shop-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.level-card,
+.shop-item {
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 10px;
+  background: #0d1117;
+}
+
+.level-card button,
+.shop-item button {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.hud-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+canvas {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #30363d;
+  background: #0b0f16;
+  display: block;
+}
+
+.result-panel {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #111827;
+  border: 1px solid #30363d;
+}
