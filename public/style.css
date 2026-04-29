@@ -106,14 +106,16 @@ button.ghost {
 }
 
 .level-list,
-.shop-list {
+.shop-list,
+.stats-list {
   display: grid;
   gap: 10px;
   margin-bottom: 12px;
 }
 
 .level-card,
-.shop-item {
+.shop-item,
+.unit-stat-card {
   border: 1px solid #30363d;
   border-radius: 10px;
   padding: 10px;
@@ -121,9 +123,16 @@ button.ghost {
 }
 
 .level-card button,
-.shop-item button {
+.shop-item button,
+.unit-stat-card button {
   margin-top: 8px;
   width: 100%;
+}
+
+.unit-stat-card .meta {
+  color: #8b949e;
+  font-size: 13px;
+  margin-top: 3px;
 }
 
 .hud {

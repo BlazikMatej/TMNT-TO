@@ -7,18 +7,34 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { createClient } = require("@supabase/supabase-js");
 
-const {
-  SUPABASE_URL,
-  SUPABASE_SERVICE_ROLE_KEY,
-  JWT_SECRET,
-  PORT = 3000,
-} = process.env;
+const localSupabaseConfig = (() => {
+  try {
+    return require("./supabase.js");
+  } catch {
+    return {};
+  }
+})();
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !JWT_SECRET) {
+const SUPABASE_URL = process.env.SUPABASE_URL || localSupabaseConfig.supabaseUrl;
+const SUPABASE_SERVICE_ROLE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_KEY ||
+  localSupabaseConfig.supabaseServiceRoleKey ||
+  localSupabaseConfig.supabaseKey;
+const JWT_SECRET = process.env.JWT_SECRET || "tmnt-local-dev-secret-change-me";
+const PORT = process.env.PORT || 3000;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.error(
-    "Missing SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, or JWT_SECRET in .env"
+    "Missing Supabase config. Set SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in .env or configure supabase.js"
   );
   process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+  console.warn(
+    "JWT_SECRET not found in .env, using development fallback secret."
+  );
 }
 
 const cleanedSupabaseUrl = SUPABASE_URL.replace(/\/rest\/v1\/?$/, "");
@@ -32,6 +48,16 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 const TOKEN_COOKIE = "tmnt_session";
+const KNOWN_UNITS = ["leo", "mike", "don", "raph", "splinter", "april", "casey"];
+const DEFAULT_UNIT_UPGRADES = {
+  leo: 1,
+  mike: 1,
+  don: 1,
+  raph: 1,
+  splinter: 1,
+  april: 1,
+  casey: 1,
+};
 
 const normalizeUsername = (value) =>
   value.trim().toLowerCase().replace(/\s+/g, "");
@@ -102,9 +128,10 @@ app.post("/api/register", async (req, res) => {
         password_hash: passwordHash,
         meta_currency: 0,
         unlocked_units: ["leo", "mike", "don", "raph"],
+        unit_upgrades: DEFAULT_UNIT_UPGRADES,
         max_level: 1,
       })
-      .select("id, username, meta_currency, unlocked_units, max_level")
+      .select("id, username, meta_currency, unlocked_units, unit_upgrades, max_level")
       .single();
 
     if (error) {
@@ -156,6 +183,7 @@ app.post("/api/login", async (req, res) => {
         username: user.username,
         meta_currency: user.meta_currency,
         unlocked_units: user.unlocked_units,
+        unit_upgrades: user.unit_upgrades,
         max_level: user.max_level,
       },
     });
@@ -175,7 +203,7 @@ app.post("/api/logout", (req, res) => {
 app.get("/api/profile", requireAuth, async (req, res) => {
   const { data: user, error } = await supabase
     .from("tmnt_users")
-    .select("id, username, meta_currency, unlocked_units, max_level")
+    .select("id, username, meta_currency, unlocked_units, unit_upgrades, max_level")
     .eq("id", req.user.sub)
     .maybeSingle();
 
@@ -189,7 +217,7 @@ app.get("/api/profile", requireAuth, async (req, res) => {
 });
 
 app.post("/api/profile", requireAuth, async (req, res) => {
-  const { meta_currency, unlocked_units, max_level } = req.body || {};
+  const { meta_currency, unlocked_units, unit_upgrades, max_level } = req.body || {};
   const updates = {};
 
   if (meta_currency !== undefined) {
@@ -209,6 +237,27 @@ app.post("/api/profile", requireAuth, async (req, res) => {
     updates.unlocked_units = unlocked_units;
   }
 
+  if (unit_upgrades !== undefined) {
+    if (
+      typeof unit_upgrades !== "object" ||
+      Array.isArray(unit_upgrades) ||
+      unit_upgrades === null
+    ) {
+      return res.status(400).json({ error: "Invalid unit_upgrades" });
+    }
+
+    const entries = Object.entries(unit_upgrades);
+    const hasInvalidUnit = entries.some(([unit]) => !KNOWN_UNITS.includes(unit));
+    const hasInvalidLevel = entries.some(
+      ([, level]) => !Number.isInteger(level) || level < 1 || level > 30
+    );
+
+    if (hasInvalidUnit || hasInvalidLevel) {
+      return res.status(400).json({ error: "Invalid unit_upgrades" });
+    }
+    updates.unit_upgrades = unit_upgrades;
+  }
+
   if (max_level !== undefined) {
     if (!Number.isInteger(max_level) || max_level < 1) {
       return res.status(400).json({ error: "Invalid max_level" });
@@ -220,7 +269,7 @@ app.post("/api/profile", requireAuth, async (req, res) => {
     .from("tmnt_users")
     .update(updates)
     .eq("id", req.user.sub)
-    .select("id, username, meta_currency, unlocked_units, max_level")
+    .select("id, username, meta_currency, unlocked_units, unit_upgrades, max_level")
     .single();
 
   if (error) {
